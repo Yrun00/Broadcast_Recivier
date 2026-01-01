@@ -18,25 +18,9 @@ import androidx.compose.ui.unit.sp
 class MainActivity : ComponentActivity() {
     private lateinit var tickReceiver: BroadcastReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         Log.e("BootCompleteReceiver", "===== APP STARTED =====")
         super.onCreate(savedInstanceState)
-
-        tickReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                Log.e("TickReceiver", "===== TIME TICK RECEIVED =====")
-                Log.d("TickReceiver", "Current time: ${System.currentTimeMillis()}")
-                Log.e("TickReceiver", "===== END =====")
-            }
-        }
-        val filter = IntentFilter(Intent.ACTION_TIME_TICK)
-
-        registerReceiver(tickReceiver, filter)
-
-
         Log.e("MainActivity", "Receiver registered!")
-
         setContent {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -48,5 +32,25 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        tickReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Log.e("TickReceiver", "===== TIME TICK RECEIVED =====")
+                Log.d("TickReceiver", "Current time: ${System.currentTimeMillis()}")
+                Log.e("TickReceiver", "===== END =====")
+            }
+        }
+        val filter = IntentFilter(Intent.ACTION_TIME_TICK)
+
+        registerReceiver(tickReceiver, filter)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(tickReceiver)
     }
 }
